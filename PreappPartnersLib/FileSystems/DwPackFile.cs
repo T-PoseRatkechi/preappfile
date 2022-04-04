@@ -128,12 +128,21 @@ namespace PreappPartnersLib.FileSystems
 
         public void AddFiles( string directoryPath, bool compress, Func<string, bool> callback )
         {
+            /*
             Parallel.ForEach( Directory.EnumerateFiles( directoryPath, "*", SearchOption.AllDirectories ), ( path =>
             {
                 if ( callback != null && !callback( path ) ) return;
                 var relativePath = path.Substring( path.IndexOf( directoryPath ) + directoryPath.Length + 1 );
                 Entries.Add( new DwPackFileEntry( relativePath, File.OpenRead( path ), compress ) );
             }));
+            */
+
+            foreach (var file in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories))
+            {
+                if (callback != null && !callback(file)) return;
+                var relativePath = file.Substring(file.IndexOf(directoryPath) + directoryPath.Length + 1);
+                Entries.Add(new DwPackFileEntry(relativePath, File.OpenRead(file), compress));
+            }
         }
 
         public static DwPackFile Pack( string directoryPath, int index, bool compress, Func<string, bool> callback )
