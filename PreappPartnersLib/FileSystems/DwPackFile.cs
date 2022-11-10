@@ -10,7 +10,7 @@ using PreappPartnersLib.Compression;
 
 namespace PreappPartnersLib.FileSystems
 {
-    public class DwPackFile
+    public class DwPackFile : IDisposable
     {
         private Stream mBaseStream;
 
@@ -152,6 +152,15 @@ namespace PreappPartnersLib.FileSystems
             pack.AddFiles( directoryPath, compress, callback );
             return pack;
         }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            foreach (var entry in this.Entries)
+            {
+                entry.Dispose();
+            }
+        }
     }
 
     public class DwPackFileEntry
@@ -268,6 +277,19 @@ namespace PreappPartnersLib.FileSystems
 
                 IsCompressed = true;
                 CompressedSize = compressedSize;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (this.mBaseStream != null)
+            {
+                this.mBaseStream.Dispose();
+            }
+
+            if (this.mDataStream != null)
+            {
+                this.mDataStream.Dispose();
             }
         }
     }
